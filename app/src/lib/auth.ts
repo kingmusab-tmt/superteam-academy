@@ -7,6 +7,23 @@ import { UserService } from '@/services/user.service';
 import { verifySignature } from '@/lib/solana-auth';
 import { cookies } from 'next/headers';
 
+function normalizeBaseUrl(baseUrl: string): string {
+  const vercelUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined;
+  const candidates = [
+    process.env.NEXT_PUBLIC_APP_URL,
+    process.env.AUTH_URL,
+    process.env.NEXTAUTH_URL,
+    vercelUrl,
+    baseUrl,
+  ];
+
+  const selected =
+    candidates.find((value) => typeof value === 'string' && /^https?:\/\//i.test(value)) ||
+    baseUrl;
+
+  return selected.replace(/\/$/, '');
+}
+
 declare module 'next-auth' {
   interface Session {
     user: {
@@ -84,6 +101,30 @@ export const authConfig: NextAuthConfig = {
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      const resolvedBaseUrl = normalizeBaseUrl(baseUrl);
+
+      if (url.startsWith('/')) {
+        return `${resolvedBaseUrl}${url}`;
+      }
+
+      try {
+        const targetUrl = new URL(url);
+        const appUrl = new URL(resolvedBaseUrl);
+
+        if (targetUrl.origin === appUrl.origin) {
+          return url;
+        }
+
+        if (targetUrl.hostname === 'localhost' || targetUrl.hostname === '127.0.0.1') {
+          return `${resolvedBaseUrl}${targetUrl.pathname}${targetUrl.search}${targetUrl.hash}`;
+        }
+      } catch {
+        return resolvedBaseUrl;
+      }
+
+      return resolvedBaseUrl;
+    },
     async signIn({ user, account, profile }) {
       if (!account) return false;
 
@@ -190,6 +231,16 @@ export const authConfig: NextAuthConfig = {
           }
         }
       }
+
+      const mutableToken = token as Record<string, unknown>;
+      delete mutableToken.access_token;
+      delete mutableToken.id_token;
+      delete mutableToken.refresh_token;
+      delete mutableToken.token_type;
+      delete mutableToken.scope;
+      delete mutableToken.expires_at;
+      delete mutableToken.session_state;
+
       return token;
     },
     async session({ session, token }) {
