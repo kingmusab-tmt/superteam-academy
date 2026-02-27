@@ -294,6 +294,8 @@ export default function HomePage() {
                   alt="CapySolBuild Academy"
                   width={280}
                   height={280}
+                  sizes="(max-width: 768px) 220px, 280px"
+                  fetchPriority="high"
                   className="relative drop-shadow-2xl"
                   priority
                 />
