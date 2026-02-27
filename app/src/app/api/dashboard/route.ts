@@ -183,6 +183,7 @@ export async function GET(request: NextRequest) {
       achievementId: achievement.achievement_id || achievement.achievementId,
       unlockedAt:
         achievement.earned_at || achievement.unlockedAt || achievement.created_at || new Date(),
+      xpReward: achievement.xp_reward || achievement.xpReward || 0,
       nftMintAddress: achievement.nft_mint_address || achievement.nftMintAddress,
     }));
 
@@ -208,8 +209,8 @@ export async function GET(request: NextRequest) {
       },
     ]);
 
-    const onboardingAchievement = userAchievements.find(
-      (achievement: any) => achievement.achievement_id === 'onboarding-complete'
+    const onboardingAchievement = normalizedAchievements.find(
+      (achievement) => achievement.achievementId === 'onboarding-complete'
     );
 
     if (onboardingAchievement) {
@@ -217,12 +218,8 @@ export async function GET(request: NextRequest) {
         type: 'onboarding_completed',
         title: 'Onboarding Completed',
         description: 'Completed onboarding and earned your first achievement',
-        timestamp:
-          onboardingAchievement.earned_at ||
-          onboardingAchievement.unlockedAt ||
-          onboardingAchievement.created_at ||
-          new Date(),
-        xpEarned: onboardingAchievement.xp_reward || 100,
+        timestamp: onboardingAchievement.unlockedAt || new Date(),
+        xpEarned: onboardingAchievement.xpReward || 100,
       });
     }
 

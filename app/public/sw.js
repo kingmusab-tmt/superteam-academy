@@ -1,6 +1,6 @@
 // Service Worker for CapySolBuild PWA
-const STATIC_CACHE_NAME = 'CapySolBuild-static-v2';
-const DYNAMIC_CACHE_NAME = 'CapySolBuild-dynamic-v2';
+const STATIC_CACHE_NAME = 'CapySolBuild-static-v3';
+const DYNAMIC_CACHE_NAME = 'CapySolBuild-dynamic-v3';
 
 // Static assets to cache on install
 const STATIC_ASSETS = [

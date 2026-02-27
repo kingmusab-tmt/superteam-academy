@@ -7,6 +7,7 @@ import { Callout } from './callout';
 import { Quiz } from './quiz';
 import { ChallengeBlock } from './challenge-block';
 import Link from 'next/link';
+import Image from 'next/image';
 
 /**
  * Custom MDX components for lesson content
@@ -177,10 +178,33 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     hr: ({ className, ...props }) => <hr className={cn('my-8 border-t', className)} {...props} />,
 
     // Images
-    img: ({ className, alt, ...props }) => (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img className={cn('my-6 rounded-lg border', className)} alt={alt || ''} {...props} />
-    ),
+    img: ({ className, alt, src, width, height, ...props }) => {
+      if (!src) {
+        return null;
+      }
+
+      const parsedWidth = typeof width === 'string' ? Number(width) : width;
+      const parsedHeight = typeof height === 'string' ? Number(height) : height;
+      const resolvedWidth = typeof parsedWidth === 'number' && Number.isFinite(parsedWidth)
+        ? parsedWidth
+        : 1200;
+      const resolvedHeight = typeof parsedHeight === 'number' && Number.isFinite(parsedHeight)
+        ? parsedHeight
+        : 675;
+
+      return (
+        <Image
+          className={cn('my-6 rounded-lg border', className)}
+          alt={alt || ''}
+          src={src}
+          width={resolvedWidth}
+          height={resolvedHeight}
+          style={{ width: '100%', height: 'auto' }}
+          unoptimized
+          {...props}
+        />
+      );
+    },
 
     // Custom components
     Callout,

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -731,11 +732,15 @@ export default function EditCoursePage() {
                           <Upload className="h-4 w-4" />
                           Uploaded Thumbnail
                         </div>
-                        <img
-                          src={course.thumbnail}
-                          alt="Course thumbnail preview"
-                          className="h-28 w-full rounded-md object-cover"
-                        />
+                        <div className="relative h-28 w-full">
+                          <Image
+                            src={course.thumbnail}
+                            alt="Course thumbnail preview"
+                            fill
+                            className="rounded-md object-cover"
+                            unoptimized
+                          />
+                        </div>
                       </div>
                     )}
                   </div>

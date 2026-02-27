@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -476,11 +477,15 @@ export default function AdminTracksPage() {
                         <Upload className="h-4 w-4" />
                         Uploaded Thumbnail
                       </div>
-                      <img
-                        src={thumbnail}
-                        alt="Track thumbnail preview"
-                        className="h-24 w-full rounded-md object-cover"
-                      />
+                      <div className="relative h-24 w-full">
+                        <Image
+                          src={thumbnail}
+                          alt="Track thumbnail preview"
+                          fill
+                          className="rounded-md object-cover"
+                          unoptimized
+                        />
+                      </div>
                     </div>
                   )}
               </div>
